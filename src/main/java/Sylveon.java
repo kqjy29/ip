@@ -12,13 +12,25 @@ public class Sylveon {
         System.out.println(banner);
         System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + line);
         Scanner scanner = new Scanner(System.in);
+        String[] tasks = new String[100];
+        int i = 0;
         while (true) {
             System.out.print("Enter your text: ");
             String command = scanner.nextLine();
             if (command.equals("bye")) {
                 break;
             }
-            System.out.println(line + "\n" + command + "\n" + line);
+            if (command.equals("list")) {
+                System.out.println(line);
+                for (int j = 0; j < i; j++) {
+                    System.out.println( "   " + (j + 1) + "." + tasks[j]);
+                }
+                System.out.println(line);
+            } else {
+                tasks[i] = command;
+                i++;
+                System.out.println(line + "\n" + "   " + "Added: " + command + "\n" + line);
+            }
         }
         System.out.println(line + "\n" + "Bye bye :) Hope to see you again soon <3\n" + line);
 
