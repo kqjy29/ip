@@ -1,18 +1,20 @@
 import java.util.Scanner;
+import java.util.ArrayList;
+
 public class Sylveon {
     private static int parseTaskNumber(String arguments, String command, int taskCount)
             throws SylveonException {
         if (arguments.isEmpty()) {
-            throw new SylveonException("Please provide a task number after " + command + ".");
+            throw new SylveonException("Error! Please provide a task number after " + command + " :)");
         }
         try {
             int taskNumber = Integer.parseInt(arguments);
             if (taskNumber < 1 || taskNumber > taskCount) {
-                throw new SylveonException("That task number does not exist.");
+                throw new SylveonException("Uh oh.. That task number does not exist :(");
             }
             return taskNumber;
         } catch (NumberFormatException e) {
-            throw new SylveonException("The task number must be a whole number.");
+            throw new SylveonException("Error! The task number has to be a whole number!");
         }
     }
 
@@ -27,9 +29,11 @@ public class Sylveon {
         System.out.println(line);
         System.out.println(banner);
         System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + line);
+
         Scanner scanner = new Scanner(System.in);
-        Task[] tasks = new Task[100];
-        int i = 0;
+        ArrayList<Task> tasks = new ArrayList<>();
+
+        //chat loop
         while (true) {
             System.out.print("Enter your text: ");
             String command = scanner.nextLine();
@@ -44,22 +48,37 @@ public class Sylveon {
             // list out tasks
             if (commandWord.equals("list")) {
                 System.out.println(line);
-                for (int j = 0; j < i; j++) {
-                    System.out.println("   " + (j + 1) + "." + tasks[j]);
+                if (tasks.isEmpty()) {
+                    System.out.println("Yay! Your task list is empty :)");
+                } else {
+                    for (int j = 0; j < tasks.size(); j++) {
+                        System.out.println("   " + (j + 1) + "." + tasks.get(j));
+                    }
                 }
                 System.out.println(line);
             } else if (commandWord.equals("mark")) {
-                int taskNumber = parseTaskNumber(arguments, "mark", i);
-                Task task = tasks[taskNumber - 1];
+                int taskNumber = parseTaskNumber(arguments, "mark", tasks.size());
+                Task task = tasks.get(taskNumber - 1);
                 task.markAsDone();
                 System.out.println(line + "\n   Great! I've marked this task as done <3\n   "
                         + task + "\n" + line);
             } else if (commandWord.equals("unmark")) {
-                int taskNumber = parseTaskNumber(arguments, "unmark", i);
-                Task task = tasks[taskNumber - 1];
+                int taskNumber = parseTaskNumber(arguments, "unmark", tasks.size());
+                Task task = tasks.get(taskNumber - 1);
                 task.markAsNotDone();
                 System.out.println(line + "\n   Okay! I've marked this task as not done yet :)\n   "
                         + task + "\n" + line);
+            } else if (commandWord.equals("delete")) {
+                int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
+                Task deletedTask = tasks.remove(taskNumber - 1);
+                System.out.println(line
+                        + "\n   Sure! I've removed this task:\n     "
+                        + deletedTask
+                        + "\n   Now you have "
+                        + tasks.size()
+                        + " tasks left! Well done <3"
+                        + "\n"
+                        + line);
             } else {
                 // allocating commands to diff classes and adding them into the task array
                 if (commandWord.equals("todo")) {
@@ -67,8 +86,7 @@ public class Sylveon {
                     if (description.isEmpty()) {
                         throw new SylveonException("Error! Remember to add a description :)");
                     }
-                    tasks[i] = new Todo(description);
-                    i++;
+                    tasks.add(new Todo(description));
                 } else if (commandWord.equals("deadline")) {
                     int idx = arguments.indexOf(" /by ");
                     if (idx == -1) {
@@ -84,8 +102,7 @@ public class Sylveon {
                     if (by.isEmpty()) {
                         throw new SylveonException("Error! Please provide a date after /by :)");
                     }
-                    tasks[i] = new Deadline(description, by);
-                    i++;
+                    tasks.add(new Deadline(description, by));
                 } else if (commandWord.equals("event")) {
                     int fromIndex = arguments.indexOf(" /from ");
                     int toIndex = arguments.indexOf(" /to ");
@@ -106,8 +123,7 @@ public class Sylveon {
                     if (to.isEmpty()) {
                         throw new SylveonException("Please add an ending time after /to :)");
                     }
-                    tasks[i] = new Event(description, from, to);
-                    i++;
+                    tasks.add(new Event(description, from, to));
                 } else {
                     //unknown command
                     throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
