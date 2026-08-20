@@ -17,9 +17,11 @@ public class Sylveon {
         while (true) {
             System.out.print("Enter your text: ");
             String command = scanner.nextLine();
+            // bye
             if (command.equals("bye")) {
                 break;
             }
+            // list out tasks
             if (command.equals("list")) {
                 System.out.println(line);
                 for (int j = 0; j < i; j++) {
@@ -39,8 +41,26 @@ public class Sylveon {
                 System.out.println(line + "\n   Okay! I've marked this task as not done yet :)\n   "
                         + task + "\n" + line);
             } else {
-                tasks[i] = new Task(command);
-                i++;
+                //allocation commands to diff classes and adding them into the task array
+                if (command.startsWith("todo ")) {
+                    String description = command.substring(5);
+                    tasks[i] = new Todo(description);
+                    i++;
+                } else if (command.startsWith("deadline ")) {
+                    int idx = command.indexOf(" /by ");
+                    String description = command.substring(9, idx);
+                    String by = command.substring(idx + 5);
+                    tasks[i] = new Deadline(description, by);
+                    i++;
+                } else if (command.startsWith("event ")) {
+                    int fromIndex = command.indexOf(" /from ");
+                    int toIndex = command.indexOf(" /to ");
+                    String description = command.substring(6, fromIndex);
+                    String from = command.substring(fromIndex + 7, toIndex);
+                    String to = command.substring(toIndex + 5);
+                    tasks[i] = new Event(description, from, to);
+                    i++;
+                }
                 System.out.println(line + "\n" + "   " + "Added: " + command + "\n" + line);
             }
         }
