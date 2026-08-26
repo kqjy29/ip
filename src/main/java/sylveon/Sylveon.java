@@ -2,6 +2,7 @@ package sylveon;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 
 /** Runs the Sylveon chatbot application. */
 public class Sylveon {
@@ -61,6 +62,16 @@ public class Sylveon {
                 Task deletedTask = tasks.delete(taskNumber - 1);
                 storage.save(tasks.getTasks());
                 ui.showDeleted(deletedTask, tasks.size());
+            } else if (commandWord.equals("find")) {
+                if (arguments.isEmpty()) {
+                    throw new SylveonException(
+                            "Error! Please provide a keyword after find."
+                    );
+                }
+
+                ArrayList<Task> matchingTasks = tasks.find(arguments);
+                ui.showMatchingTasks(matchingTasks);
+
             } else {
                 // Create and add a new task.
                 if (commandWord.equals("todo")) {

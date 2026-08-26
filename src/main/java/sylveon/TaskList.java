@@ -23,6 +23,24 @@ public class TaskList {
     /** Returns the number of tasks. */
     public int size() { return tasks.size(); }
 
+    /**
+     * Returns all tasks whose descriptions contain the specified keyword.
+     *
+     * @param keyword keyword to search for
+     * @return tasks whose descriptions contain the keyword
+     */
+    public ArrayList<Task> find(String keyword) {
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.getDescription().contains(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return matchingTasks;
+    }
+
     /** Returns whether there are no tasks. */
     public boolean isEmpty() { return tasks.isEmpty(); }
 
