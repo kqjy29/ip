@@ -3,6 +3,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.time.LocalDate;
 
 public class Storage {
     private final Path filePath;
@@ -62,7 +63,7 @@ public class Storage {
                 if (parts[0].equals("T")) {
                     task = new Todo(parts[2]);
                 } else if (parts[0].equals("D")) {
-                    task = new Deadline(parts[2], parts[3]);
+                    task = new Deadline(parts[2], LocalDate.parse(parts[3]));
                 } else if (parts[0].equals("E")) {
                     task = new Event(parts[2], parts[3], parts[4]);
                 } else {
