@@ -1,5 +1,7 @@
+package sylveon;
+
 /**
- * Represents one task in Sylveon's task list.
+ * Represents one task in sylveon.Sylveon's task list.
  */
 public class Task {
     private final String description;

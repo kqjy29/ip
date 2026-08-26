@@ -1,9 +1,11 @@
-import java.util.Scanner;
-import java.util.ArrayList;
+package sylveon;
+
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/** Runs the Sylveon chatbot application. */
 public class Sylveon {
+    /** Converts a user-provided task number into a zero-based list position. */
     private static int parseTaskNumber(String arguments, String command, int taskCount)
             throws SylveonException {
         if (arguments.isEmpty()) {
@@ -20,80 +22,54 @@ public class Sylveon {
         }
     }
 
+    /** Starts the chatbot and processes commands until the user exits. */
     public static void main(String[] args) {
-        String banner = "  ____          _                              \n"
-                + " / ___| _   _  | | __   __  ___   ___   _ __  \n"
-                + " \\___ \\| | | | | | \\ \\ / / / _ \\ / _ \\ | '_ \\ \n"
-                + "  ___) | |_| | | |  \\ V / |  __/| (_) || | | |\n"
-                + " |____/ \\__, | |_|   \\_/   \\___| \\___/ |_| |_|\n"
-                + "        |___/                                 ";
-        String line = "----------<3----------<3----------<3----------";
-        System.out.println(line);
-        System.out.println(banner);
-        System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + line);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
-        Scanner scanner = new Scanner(System.in);
         Storage storage = new Storage("data/sylveon.txt");
-        ArrayList<Task> tasks = storage.load();
+        TaskList tasks = new TaskList(storage.load());
 
-        //chat loop
+        // Process commands until the user exits.
         while (true) {
-            System.out.print("Enter your text: ");
-            String command = scanner.nextLine();
-            String[] words = command.trim().split("\\s+", 2);
-            String commandWord = words[0];
-            String arguments = words.length > 1 ? words[1].trim() : "";
-            // bye
+            String command = ui.readCommand();
+            Parser parser = new Parser();
+            String commandWord = parser.getCommandWord(command);
+            String arguments = parser.getArguments(command);
+            // Exit the application.
             if (commandWord.equals("bye")) {
                 break;
             }
             try {
-            // list out tasks
+            // Display the task list.
             if (commandWord.equals("list")) {
-                System.out.println(line);
-                if (tasks.isEmpty()) {
-                    System.out.println("Yay! Your task list is empty :)");
-                } else {
-                    for (int j = 0; j < tasks.size(); j++) {
-                        System.out.println("   " + (j + 1) + "." + tasks.get(j));
-                    }
-                }
-                System.out.println(line);
+                ui.showList(tasks.getTasks());
             } else if (commandWord.equals("mark")) {
                 int taskNumber = parseTaskNumber(arguments, "mark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsDone();
-                storage.save(tasks);
-                System.out.println(line + "\n   Great! I've marked this task as done <3\n   "
-                        + task + "\n" + line);
+                storage.save(tasks.getTasks());
+                ui.showMarked(task);
             } else if (commandWord.equals("unmark")) {
                 int taskNumber = parseTaskNumber(arguments, "unmark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsNotDone();
-                storage.save(tasks);
-                System.out.println(line + "\n   Okay! I've marked this task as not done yet :)\n   "
-                        + task + "\n" + line);
+                storage.save(tasks.getTasks());
+                ui.showUnmarked(task);
             } else if (commandWord.equals("delete")) {
                 int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
-                Task deletedTask = tasks.remove(taskNumber - 1);
-                storage.save(tasks);
-                System.out.println(line
-                        + "\n   Sure! I've removed this task:\n     "
-                        + deletedTask
-                        + "\n   Now you have "
-                        + tasks.size()
-                        + " tasks left! Well done <3"
-                        + "\n"
-                        + line);
+                Task deletedTask = tasks.delete(taskNumber - 1);
+                storage.save(tasks.getTasks());
+                ui.showDeleted(deletedTask, tasks.size());
             } else {
-                // allocating commands to diff classes and adding them into the task array
+                // Create and add a new task.
                 if (commandWord.equals("todo")) {
                     String description = arguments;
                     if (description.isEmpty()) {
                         throw new SylveonException("Error! Remember to add a description :)");
                     }
                     tasks.add(new Todo(description));
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                 } else if (commandWord.equals("deadline")) {
                     int idx = arguments.indexOf(" /by ");
                     if (idx == -1) {
@@ -112,7 +88,7 @@ public class Sylveon {
                     try {
                         LocalDate date = LocalDate.parse(by);
                         tasks.add(new Deadline(description, date));
-                        storage.save(tasks);
+                        storage.save(tasks.getTasks());
                     } catch (DateTimeParseException e) {
                         throw new SylveonException(
                                 "Error! Please use the date format yyyy-mm-dd :)"
@@ -140,18 +116,19 @@ public class Sylveon {
                         throw new SylveonException("Please add an ending time after /to :)");
                     }
                     tasks.add(new Event(description, from, to));
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                 } else {
-                    //unknown command
-                    throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
+                    // Reject unrecognised commands.
+                    throw new SylveonException(
+                            "Oh no, could you try something else? I do not recognise this command :(");
                 }
-                System.out.println(line + "\n" + "   " + "Added: " + command + "\n" + line);
+                ui.showAdded(command);
             }
             } catch (SylveonException e) {
-                System.out.println(line + "\n   " + e.getMessage() + "\n" + line);
+                ui.showError(e.getMessage());
             }
         }
-        System.out.println(line + "\n" + "Bye bye :) Hope to see you again soon <3\n" + line);
+        ui.showBye();
 
     }
 }
