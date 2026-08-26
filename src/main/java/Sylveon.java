@@ -1,4 +1,3 @@
-import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
@@ -24,7 +23,7 @@ public class Sylveon {
         ui.showWelcome();
 
         Storage storage = new Storage("data/sylveon.txt");
-        ArrayList<Task> tasks = storage.load();
+        TaskList tasks = new TaskList(storage.load());
 
         //chat loop
         while (true) {
@@ -39,23 +38,23 @@ public class Sylveon {
             try {
             // list out tasks
             if (commandWord.equals("list")) {
-                ui.showList(tasks);
+                ui.showList(tasks.getTasks());
             } else if (commandWord.equals("mark")) {
                 int taskNumber = parseTaskNumber(arguments, "mark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsDone();
-                storage.save(tasks);
+                storage.save(tasks.getTasks());
                 ui.showMarked(task);
             } else if (commandWord.equals("unmark")) {
                 int taskNumber = parseTaskNumber(arguments, "unmark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsNotDone();
-                storage.save(tasks);
+                storage.save(tasks.getTasks());
                 ui.showUnmarked(task);
             } else if (commandWord.equals("delete")) {
                 int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
-                Task deletedTask = tasks.remove(taskNumber - 1);
-                storage.save(tasks);
+                Task deletedTask = tasks.delete(taskNumber - 1);
+                storage.save(tasks.getTasks());
                 ui.showDeleted(deletedTask, tasks.size());
             } else {
                 // allocating commands to diff classes and adding them into the task array
@@ -65,7 +64,7 @@ public class Sylveon {
                         throw new SylveonException("Error! Remember to add a description :)");
                     }
                     tasks.add(new Todo(description));
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                 } else if (commandWord.equals("deadline")) {
                     int idx = arguments.indexOf(" /by ");
                     if (idx == -1) {
@@ -84,7 +83,7 @@ public class Sylveon {
                     try {
                         LocalDate date = LocalDate.parse(by);
                         tasks.add(new Deadline(description, date));
-                        storage.save(tasks);
+                        storage.save(tasks.getTasks());
                     } catch (DateTimeParseException e) {
                         throw new SylveonException(
                                 "Error! Please use the date format yyyy-mm-dd :)"
@@ -112,7 +111,7 @@ public class Sylveon {
                         throw new SylveonException("Please add an ending time after /to :)");
                     }
                     tasks.add(new Event(description, from, to));
-                    storage.save(tasks);
+                    storage.save(tasks.getTasks());
                 } else {
                     //unknown command
                     throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
