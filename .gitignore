@@ -23,3 +23,5 @@ text-ui-test/EXPECTED-UNIX.TXT
 .idea/
 *.iml
 *.iws
+
+data/sylveon.txt

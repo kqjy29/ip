@@ -1,5 +1,7 @@
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 
 public class Sylveon {
     private static int parseTaskNumber(String arguments, String command, int taskCount)
@@ -107,8 +109,16 @@ public class Sylveon {
                     if (by.isEmpty()) {
                         throw new SylveonException("Error! Please provide a date after /by :)");
                     }
-                    tasks.add(new Deadline(description, by));
-                    storage.save(tasks);
+                    try {
+                        LocalDate date = LocalDate.parse(by);
+                        tasks.add(new Deadline(description, date));
+                        storage.save(tasks);
+                    } catch (DateTimeParseException e) {
+                        throw new SylveonException(
+                                "Error! Please use the date format yyyy-mm-dd :)"
+                        );
+                    }
+
                 } else if (commandWord.equals("event")) {
                     int fromIndex = arguments.indexOf(" /from ");
                     int toIndex = arguments.indexOf(" /to ");
