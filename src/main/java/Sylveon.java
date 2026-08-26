@@ -28,9 +28,9 @@ public class Sylveon {
         //chat loop
         while (true) {
             String command = ui.readCommand();
-            String[] words = command.trim().split("\\s+", 2);
-            String commandWord = words[0];
-            String arguments = words.length > 1 ? words[1].trim() : "";
+            Parser parser = new Parser();
+            String commandWord = parser.getCommandWord(command);
+            String arguments = parser.getArguments(command);
             // bye
             if (commandWord.equals("bye")) {
                 break;
