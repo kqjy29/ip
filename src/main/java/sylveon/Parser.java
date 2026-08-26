@@ -1,3 +1,5 @@
+package sylveon;
+
 public class Parser {
     public String getCommandWord(String command) {
         return command.trim().split("\\s+", 2)[0];

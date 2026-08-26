@@ -1,3 +1,5 @@
+package sylveon;
+
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -18,7 +20,7 @@ public class Ui {
     public void showWelcome() {
         System.out.println(LINE);
         System.out.println(BANNER);
-        System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + LINE);
+        System.out.println("Hi!! I'm sylveon.Sylveon <3\nWhat can I do for you?\n" + LINE);
     }
 
     public String readCommand() {

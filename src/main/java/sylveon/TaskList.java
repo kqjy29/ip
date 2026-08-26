@@ -1,6 +1,8 @@
+package sylveon;
+
 import java.util.ArrayList;
 
-/** Manages the collection of tasks in Sylveon. */
+/** Manages the collection of tasks in sylveon.Sylveon. */
 public class TaskList {
     private final ArrayList<Task> tasks;
 
