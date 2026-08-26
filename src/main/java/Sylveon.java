@@ -1,4 +1,3 @@
-import java.util.Scanner;
 import java.util.ArrayList;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
@@ -21,25 +20,15 @@ public class Sylveon {
     }
 
     public static void main(String[] args) {
-        String banner = "  ____          _                              \n"
-                + " / ___| _   _  | | __   __  ___   ___   _ __  \n"
-                + " \\___ \\| | | | | | \\ \\ / / / _ \\ / _ \\ | '_ \\ \n"
-                + "  ___) | |_| | | |  \\ V / |  __/| (_) || | | |\n"
-                + " |____/ \\__, | |_|   \\_/   \\___| \\___/ |_| |_|\n"
-                + "        |___/                                 ";
-        String line = "----------<3----------<3----------<3----------";
-        System.out.println(line);
-        System.out.println(banner);
-        System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + line);
+        Ui ui = new Ui();
+        ui.showWelcome();
 
-        Scanner scanner = new Scanner(System.in);
         Storage storage = new Storage("data/sylveon.txt");
         ArrayList<Task> tasks = storage.load();
 
         //chat loop
         while (true) {
-            System.out.print("Enter your text: ");
-            String command = scanner.nextLine();
+            String command = ui.readCommand();
             String[] words = command.trim().split("\\s+", 2);
             String commandWord = words[0];
             String arguments = words.length > 1 ? words[1].trim() : "";
@@ -50,41 +39,24 @@ public class Sylveon {
             try {
             // list out tasks
             if (commandWord.equals("list")) {
-                System.out.println(line);
-                if (tasks.isEmpty()) {
-                    System.out.println("Yay! Your task list is empty :)");
-                } else {
-                    for (int j = 0; j < tasks.size(); j++) {
-                        System.out.println("   " + (j + 1) + "." + tasks.get(j));
-                    }
-                }
-                System.out.println(line);
+                ui.showList(tasks);
             } else if (commandWord.equals("mark")) {
                 int taskNumber = parseTaskNumber(arguments, "mark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsDone();
                 storage.save(tasks);
-                System.out.println(line + "\n   Great! I've marked this task as done <3\n   "
-                        + task + "\n" + line);
+                ui.showMarked(task);
             } else if (commandWord.equals("unmark")) {
                 int taskNumber = parseTaskNumber(arguments, "unmark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsNotDone();
                 storage.save(tasks);
-                System.out.println(line + "\n   Okay! I've marked this task as not done yet :)\n   "
-                        + task + "\n" + line);
+                ui.showUnmarked(task);
             } else if (commandWord.equals("delete")) {
                 int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
                 Task deletedTask = tasks.remove(taskNumber - 1);
                 storage.save(tasks);
-                System.out.println(line
-                        + "\n   Sure! I've removed this task:\n     "
-                        + deletedTask
-                        + "\n   Now you have "
-                        + tasks.size()
-                        + " tasks left! Well done <3"
-                        + "\n"
-                        + line);
+                ui.showDeleted(deletedTask, tasks.size());
             } else {
                 // allocating commands to diff classes and adding them into the task array
                 if (commandWord.equals("todo")) {
@@ -145,13 +117,13 @@ public class Sylveon {
                     //unknown command
                     throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
                 }
-                System.out.println(line + "\n" + "   " + "Added: " + command + "\n" + line);
+                ui.showAdded(command);
             }
             } catch (SylveonException e) {
-                System.out.println(line + "\n   " + e.getMessage() + "\n" + line);
+                ui.showError(e.getMessage());
             }
         }
-        System.out.println(line + "\n" + "Bye bye :) Hope to see you again soon <3\n" + line);
+        ui.showBye();
 
     }
 }
