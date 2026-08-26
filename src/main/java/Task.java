@@ -21,6 +21,14 @@ public class Task {
         done = false;
     }
 
+    public String getDescription() {
+        return description;
+    }
+
+    public boolean isDone() {
+        return done;
+    }
+
     /** Returns the task's display status and description. */
     @Override
     public String toString() {
