@@ -30,18 +30,18 @@ public class Sylveon {
         Storage storage = new Storage("data/sylveon.txt");
         TaskList tasks = new TaskList(storage.load());
 
-        //chat loop
+        // Process commands until the user exits.
         while (true) {
             String command = ui.readCommand();
             Parser parser = new Parser();
             String commandWord = parser.getCommandWord(command);
             String arguments = parser.getArguments(command);
-            // bye
+            // Exit the application.
             if (commandWord.equals("bye")) {
                 break;
             }
             try {
-            // list out tasks
+            // Display the task list.
             if (commandWord.equals("list")) {
                 ui.showList(tasks.getTasks());
             } else if (commandWord.equals("mark")) {
@@ -62,7 +62,7 @@ public class Sylveon {
                 storage.save(tasks.getTasks());
                 ui.showDeleted(deletedTask, tasks.size());
             } else {
-                // allocating commands to diff classes and adding them into the task array
+                // Create and add a new task.
                 if (commandWord.equals("todo")) {
                     String description = arguments;
                     if (description.isEmpty()) {
@@ -118,8 +118,9 @@ public class Sylveon {
                     tasks.add(new Event(description, from, to));
                     storage.save(tasks.getTasks());
                 } else {
-                    //unknown command
-                    throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
+                    // Reject unrecognised commands.
+                    throw new SylveonException(
+                            "Oh no, could you try something else? I do not recognise this command :(");
                 }
                 ui.showAdded(command);
             }

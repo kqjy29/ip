@@ -1,7 +1,7 @@
 package sylveon;
 
-import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /** Handles displaying messages and reading input for the chatbot. */
 public class Ui {

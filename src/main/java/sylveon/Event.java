@@ -1,7 +1,7 @@
 package sylveon;
 
 /** Represents a task that takes place during a specified time period. */
-public class Event extends Task{
+public class Event extends Task {
     private String from;
     private String to;
 
