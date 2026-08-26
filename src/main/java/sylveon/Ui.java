@@ -95,4 +95,24 @@ public class Ui {
                 + "\n"
                 + LINE);
     }
+
+    /**
+     * Displays tasks matching a search keyword.
+     *
+     * @param tasks matching tasks to display
+     */
+    public void showMatchingTasks(ArrayList<Task> tasks) {
+        System.out.println(LINE);
+        System.out.println("Here are the matching tasks in your list:");
+
+        if (tasks.isEmpty()) {
+            System.out.println("There are no matching tasks.");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("   " + (i + 1) + "." + tasks.get(i));
+            }
+        }
+
+        System.out.println(LINE);
+    }
 }
