@@ -31,7 +31,8 @@ public class Sylveon {
         System.out.println("Hi!! I'm Sylveon <3\nWhat can I do for you?\n" + line);
 
         Scanner scanner = new Scanner(System.in);
-        ArrayList<Task> tasks = new ArrayList<>();
+        Storage storage = new Storage("data/sylveon.txt");
+        ArrayList<Task> tasks = storage.load();
 
         //chat loop
         while (true) {
@@ -60,17 +61,20 @@ public class Sylveon {
                 int taskNumber = parseTaskNumber(arguments, "mark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsDone();
+                storage.save(tasks);
                 System.out.println(line + "\n   Great! I've marked this task as done <3\n   "
                         + task + "\n" + line);
             } else if (commandWord.equals("unmark")) {
                 int taskNumber = parseTaskNumber(arguments, "unmark", tasks.size());
                 Task task = tasks.get(taskNumber - 1);
                 task.markAsNotDone();
+                storage.save(tasks);
                 System.out.println(line + "\n   Okay! I've marked this task as not done yet :)\n   "
                         + task + "\n" + line);
             } else if (commandWord.equals("delete")) {
                 int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
                 Task deletedTask = tasks.remove(taskNumber - 1);
+                storage.save(tasks);
                 System.out.println(line
                         + "\n   Sure! I've removed this task:\n     "
                         + deletedTask
@@ -87,6 +91,7 @@ public class Sylveon {
                         throw new SylveonException("Error! Remember to add a description :)");
                     }
                     tasks.add(new Todo(description));
+                    storage.save(tasks);
                 } else if (commandWord.equals("deadline")) {
                     int idx = arguments.indexOf(" /by ");
                     if (idx == -1) {
@@ -103,6 +108,7 @@ public class Sylveon {
                         throw new SylveonException("Error! Please provide a date after /by :)");
                     }
                     tasks.add(new Deadline(description, by));
+                    storage.save(tasks);
                 } else if (commandWord.equals("event")) {
                     int fromIndex = arguments.indexOf(" /from ");
                     int toIndex = arguments.indexOf(" /to ");
@@ -124,6 +130,7 @@ public class Sylveon {
                         throw new SylveonException("Please add an ending time after /to :)");
                     }
                     tasks.add(new Event(description, from, to));
+                    storage.save(tasks);
                 } else {
                     //unknown command
                     throw new SylveonException("Oh no, could you try something else? I do not recognise this command :(");
