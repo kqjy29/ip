@@ -3,7 +3,9 @@ package sylveon;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 
+/** Runs the Sylveon chatbot application. */
 public class Sylveon {
+    /** Converts a user-provided task number into a zero-based list position. */
     private static int parseTaskNumber(String arguments, String command, int taskCount)
             throws SylveonException {
         if (arguments.isEmpty()) {
@@ -20,6 +22,7 @@ public class Sylveon {
         }
     }
 
+    /** Starts the chatbot and processes commands until the user exits. */
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();

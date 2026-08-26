@@ -7,13 +7,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDate;
 
+/** Handles saving and loading tasks from a file. */
 public class Storage {
     private final Path filePath;
 
+    /** Creates a storage object for the specified file. */
     public Storage(String filePath) {
         this.filePath = Path.of(filePath);
     }
 
+    /** Saves the supplied tasks to the storage file. */
     public void save(ArrayList<Task> tasks) {
         List<String> lines = new ArrayList<>();
 
@@ -47,6 +50,7 @@ public class Storage {
         }
     }
 
+    /** Loads tasks from the storage file. */
     public ArrayList<Task> load() {
         ArrayList<Task> tasks = new ArrayList<>();
 
