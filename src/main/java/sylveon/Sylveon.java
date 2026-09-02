@@ -6,6 +6,16 @@ import java.util.ArrayList;
 
 /** Runs the Sylveon chatbot application. */
 public class Sylveon {
+    /**
+     * Generates a response for a user's GUI message.
+     *
+     * @param input the user's message
+     * @return Sylveon's response
+     */
+    public String getResponse(String input) {
+        return "Sylveon heard: " + input;
+    }
+
     /** Converts a user-provided task number into a zero-based list position. */
     private static int parseTaskNumber(String arguments, String command, int taskCount)
             throws SylveonException {

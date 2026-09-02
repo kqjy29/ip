@@ -13,6 +13,8 @@ public class MainWindow extends AnchorPane {
     @FXML private VBox dialogContainer;
     @FXML private TextField userInput;
 
+    private Sylveon sylveon;
+
     private final Image userImage = new Image(getClass().getResourceAsStream("/images/jigglypic.jpg"));
     private final Image sylveonImage = new Image(getClass().getResourceAsStream("/images/sylveonpic.jpg"));
 
@@ -24,6 +26,15 @@ public class MainWindow extends AnchorPane {
                 "Hello! I am Sylveon. What can I do for you?", sylveonImage));
     }
 
+    /**
+     * Injects the Sylveon instance used to generate responses.
+     *
+     * @param sylveon the chatbot logic
+     */
+    public void setSylveon(Sylveon sylveon) {
+        this.sylveon = sylveon;
+    }
+
     /** Displays the user's message and a temporary Sylveon response. */
     @FXML
     private void handleUserInput() {
@@ -31,9 +42,10 @@ public class MainWindow extends AnchorPane {
         if (userText.isEmpty()) {
             return;
         }
+        String response = sylveon.getResponse(userText);
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText, userImage),
-                DialogBox.getSylveonDialog("Sylveon heard: " + userText, sylveonImage));
+                DialogBox.getSylveonDialog(response, sylveonImage));
         userInput.clear();
     }
 }

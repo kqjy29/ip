@@ -22,6 +22,11 @@ public class Main extends Application {
     public void start(Stage stage) throws IOException {
         FXMLLoader loader = new FXMLLoader(Main.class.getResource("/view/MainWindow.fxml"));
         AnchorPane mainLayout = loader.load();
+
+        Sylveon sylveon = new Sylveon();
+        MainWindow controller = loader.getController();
+        controller.setSylveon(sylveon);
+
         stage.setTitle("Sylveon");
         stage.setResizable(false);
         stage.setScene(new Scene(mainLayout));
