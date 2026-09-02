@@ -6,6 +6,15 @@ import java.util.ArrayList;
 
 /** Runs the Sylveon chatbot application. */
 public class Sylveon {
+    private final Storage storage;
+    private final TaskList tasks;
+
+    /** Creates Sylveon and loads its saved tasks. */
+    public Sylveon() {
+        storage = new Storage("data/sylveon.txt");
+        tasks = new TaskList(storage.load());
+    }
+
     /**
      * Generates a response for a user's GUI message.
      *
@@ -13,7 +22,122 @@ public class Sylveon {
      * @return Sylveon's response
      */
     public String getResponse(String input) {
-        return "Sylveon heard: " + input;
+        Parser parser = new Parser();
+        String commandWord = parser.getCommandWord(input);
+        String arguments = parser.getArguments(input);
+        try {
+            if (commandWord.equals("list")) {
+                return formatTaskList();
+            } else if (commandWord.equals("mark") || commandWord.equals("unmark")) {
+                return changeTaskStatus(commandWord, arguments);
+            } else if (commandWord.equals("delete")) {
+                return deleteTask(arguments);
+            } else if (commandWord.equals("find")) {
+                return findTasks(arguments);
+            } else if (commandWord.equals("todo")) {
+                return addTask(new Todo(arguments), input);
+            } else if (commandWord.equals("deadline")) {
+                return addDeadline(arguments, input);
+            } else if (commandWord.equals("event")) {
+                return addEvent(arguments, input);
+            } else if (commandWord.equals("bye")) {
+                return "Bye bye :) Hope to see you again soon <3";
+            }
+            throw new SylveonException("Oh no, could you try something else? "
+                    + "I do not recognise this command :(");
+        } catch (SylveonException e) {
+            return e.getMessage();
+        }
+    }
+
+    private String formatTaskList() {
+        if (tasks.isEmpty()) {
+            return "Yay! Your task list is empty :)";
+        }
+        StringBuilder result = new StringBuilder("Here are your tasks:\n");
+        for (int i = 0; i < tasks.size(); i++) {
+            result.append("   ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+        }
+        return result.toString().trim();
+    }
+
+    private String changeTaskStatus(String command, String arguments) throws SylveonException {
+        int taskNumber = parseTaskNumber(arguments, command, tasks.size());
+        Task task = tasks.get(taskNumber - 1);
+        if (command.equals("mark")) {
+            task.markAsDone();
+            storage.save(tasks.getTasks());
+            return "Great! I've marked this task as done <3\n" + task;
+        }
+        task.markAsNotDone();
+        storage.save(tasks.getTasks());
+        return "Okay! I've marked this task as not done yet :)\n" + task;
+    }
+
+    private String deleteTask(String arguments) throws SylveonException {
+        int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
+        Task deletedTask = tasks.delete(taskNumber - 1);
+        storage.save(tasks.getTasks());
+        return "Sure! I've removed this task:\n" + deletedTask
+                + "\nNow you have " + tasks.size() + " tasks left!";
+    }
+
+    private String findTasks(String arguments) throws SylveonException {
+        if (arguments.isEmpty()) {
+            throw new SylveonException("Error! Please provide a keyword after find.");
+        }
+        ArrayList<Task> matchingTasks = tasks.find(arguments);
+        if (matchingTasks.isEmpty()) {
+            return "There are no matching tasks.";
+        }
+        StringBuilder result = new StringBuilder("Here are the matching tasks:\n");
+        for (int i = 0; i < matchingTasks.size(); i++) {
+            result.append("   ").append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+        }
+        return result.toString().trim();
+    }
+
+    private String addTask(Task task, String input) throws SylveonException {
+        if (task.getDescription().isEmpty()) {
+            throw new SylveonException("Error! Remember to add a description :)");
+        }
+        tasks.add(task);
+        storage.save(tasks.getTasks());
+        return "Added: " + input;
+    }
+
+    private String addDeadline(String arguments, String input) throws SylveonException {
+        int index = arguments.indexOf(" /by ");
+        if (index == -1) {
+            throw new SylveonException("Error! A deadline has to be written like this: "
+                    + "deadline <description> /by <date>");
+        }
+        String description = arguments.substring(0, index).trim();
+        String dateText = arguments.substring(index + 5).trim();
+        if (description.isEmpty() || dateText.isEmpty()) {
+            throw new SylveonException("Error! A deadline needs a description and date :)");
+        }
+        try {
+            return addTask(new Deadline(description, LocalDate.parse(dateText)), input);
+        } catch (DateTimeParseException e) {
+            throw new SylveonException("Error! Please use the date format yyyy-mm-dd :)");
+        }
+    }
+
+    private String addEvent(String arguments, String input) throws SylveonException {
+        int fromIndex = arguments.indexOf(" /from ");
+        int toIndex = arguments.indexOf(" /to ");
+        if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
+            throw new SylveonException("Error! An event must be written like this: "
+                    + "event <description> /from <start> /to <end>");
+        }
+        String description = arguments.substring(0, fromIndex).trim();
+        String from = arguments.substring(fromIndex + 7, toIndex).trim();
+        String to = arguments.substring(toIndex + 5).trim();
+        if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
+            throw new SylveonException("Error! An event needs a description, start, and end :)");
+        }
+        return addTask(new Event(description, from, to), input);
     }
 
     /** Converts a user-provided task number into a zero-based list position. */
