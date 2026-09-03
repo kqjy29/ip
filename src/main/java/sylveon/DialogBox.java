@@ -6,6 +6,7 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Pos;
 import javafx.scene.control.Label;
+import javafx.scene.shape.Circle;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
@@ -36,6 +37,7 @@ public class DialogBox extends HBox {
         }
         dialog.setText(message);
         displayPicture.setImage(image);
+        displayPicture.setClip(new Circle(36, 36, 36));
     }
 
     /** Returns a dialog box positioned on the right for the user. */
@@ -53,6 +55,7 @@ public class DialogBox extends HBox {
     /** Moves the avatar to the left and the message to the right. */
     private void flip() {
         setAlignment(Pos.TOP_LEFT);
+        dialog.getStyleClass().add("reply-label");
         ObservableList<Node> reversedChildren = FXCollections.observableArrayList(getChildren());
         FXCollections.reverse(reversedChildren);
         getChildren().setAll(reversedChildren);

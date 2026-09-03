@@ -28,7 +28,8 @@ public class Main extends Application {
         controller.setSylveon(sylveon);
 
         stage.setTitle("Sylveon");
-        stage.setResizable(false);
+        stage.setMinWidth(417);
+        stage.setMinHeight(220);
         stage.setScene(new Scene(mainLayout));
         stage.show();
     }

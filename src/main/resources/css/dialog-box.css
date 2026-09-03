@@ -1,0 +1,16 @@
+.label {
+    -fx-background-color: linear-gradient(to bottom right, #ffd6e5, #ffc2d8);
+    -fx-border-color: #ff8fab;
+    -fx-border-width: 2px;
+    -fx-background-radius: 1em 1em 0 1em;
+    -fx-border-radius: 1em 1em 0 1em;
+}
+
+.reply-label {
+    -fx-background-radius: 1em 1em 1em 0;
+    -fx-border-radius: 1em 1em 1em 0;
+}
+
+#displayPicture {
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.2), 10, 0.5, 3, 3);
+}
