@@ -9,6 +9,7 @@ public class Task {
 
     /** Creates a task that is initially not done. */
     public Task(String description) {
+        assert description != null : "Task description must not be null";
         this.description = description;
         this.done = false;
     }

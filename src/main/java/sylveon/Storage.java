@@ -18,6 +18,7 @@ public class Storage {
 
     /** Saves the supplied tasks to the storage file. */
     public void save(ArrayList<Task> tasks) {
+        assert tasks != null : "Tasks to save must not be null";
         List<String> lines = new ArrayList<>();
 
         for (Task task : tasks) {
