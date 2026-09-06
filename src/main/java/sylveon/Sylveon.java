@@ -6,6 +6,10 @@ import java.util.ArrayList;
 
 /** Runs the Sylveon chatbot application. */
 public class Sylveon {
+    private static final String DEADLINE_SEPARATOR = " /by ";
+    private static final String EVENT_START_SEPARATOR = " /from ";
+    private static final String EVENT_END_SEPARATOR = " /to ";
+
     private final Storage storage;
     private final TaskList tasks;
 
@@ -22,31 +26,39 @@ public class Sylveon {
      * @return Sylveon's response
      */
     public String getResponse(String input) {
+        try {
+            return processCommand(input);
+        } catch (SylveonException e) {
+            return e.getMessage();
+        }
+    }
+
+    private String processCommand(String input) throws SylveonException {
         Parser parser = new Parser();
         String commandWord = parser.getCommandWord(input);
         String arguments = parser.getArguments(input);
-        try {
-            if (commandWord.equals("list")) {
-                return formatTaskList();
-            } else if (commandWord.equals("mark") || commandWord.equals("unmark")) {
-                return changeTaskStatus(commandWord, arguments);
-            } else if (commandWord.equals("delete")) {
-                return deleteTask(arguments);
-            } else if (commandWord.equals("find")) {
-                return findTasks(arguments);
-            } else if (commandWord.equals("todo")) {
-                return addTask(new Todo(arguments), input);
-            } else if (commandWord.equals("deadline")) {
-                return addDeadline(arguments, input);
-            } else if (commandWord.equals("event")) {
-                return addEvent(arguments, input);
-            } else if (commandWord.equals("bye")) {
-                return "Bye bye :) Hope to see you again soon <3";
-            }
+
+        switch (commandWord) {
+        case "list":
+            return formatTaskList();
+        case "mark":
+        case "unmark":
+            return changeTaskStatus(commandWord, arguments);
+        case "delete":
+            return deleteTask(arguments);
+        case "find":
+            return findTasks(arguments);
+        case "todo":
+            return addTask(new Todo(arguments), input);
+        case "deadline":
+            return addDeadline(arguments, input);
+        case "event":
+            return addEvent(arguments, input);
+        case "bye":
+            return "Bye bye :) Hope to see you again soon <3";
+        default:
             throw new SylveonException("Oh no, could you try something else? "
                     + "I do not recognise this command :(");
-        } catch (SylveonException e) {
-            return e.getMessage();
         }
     }
 
@@ -110,13 +122,13 @@ public class Sylveon {
     }
 
     private String addDeadline(String arguments, String input) throws SylveonException {
-        int index = arguments.indexOf(" /by ");
+        int index = arguments.indexOf(DEADLINE_SEPARATOR);
         if (index == -1) {
             throw new SylveonException("Error! A deadline has to be written like this: "
                     + "deadline <description> /by <date>");
         }
         String description = arguments.substring(0, index).trim();
-        String dateText = arguments.substring(index + 5).trim();
+        String dateText = arguments.substring(index + DEADLINE_SEPARATOR.length()).trim();
         if (description.isEmpty() || dateText.isEmpty()) {
             throw new SylveonException("Error! A deadline needs a description and date :)");
         }
@@ -128,15 +140,15 @@ public class Sylveon {
     }
 
     private String addEvent(String arguments, String input) throws SylveonException {
-        int fromIndex = arguments.indexOf(" /from ");
-        int toIndex = arguments.indexOf(" /to ");
+        int fromIndex = arguments.indexOf(EVENT_START_SEPARATOR);
+        int toIndex = arguments.indexOf(EVENT_END_SEPARATOR);
         if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
             throw new SylveonException("Error! An event must be written like this: "
                     + "event <description> /from <start> /to <end>");
         }
         String description = arguments.substring(0, fromIndex).trim();
-        String from = arguments.substring(fromIndex + 7, toIndex).trim();
-        String to = arguments.substring(toIndex + 5).trim();
+        String from = arguments.substring(fromIndex + EVENT_START_SEPARATOR.length(), toIndex).trim();
+        String to = arguments.substring(toIndex + EVENT_END_SEPARATOR.length()).trim();
         if (description.isEmpty() || from.isEmpty() || to.isEmpty()) {
             throw new SylveonException("Error! An event needs a description, start, and end :)");
         }
