@@ -24,10 +24,20 @@ public class Task {
         done = false;
     }
 
+    /**
+     * Returns the task description.
+     *
+     * @return the task description
+     */
     public String getDescription() {
         return description;
     }
 
+    /**
+     * Returns whether this task has been completed.
+     *
+     * @return true if the task is done, otherwise false
+     */
     public boolean isDone() {
         return done;
     }
