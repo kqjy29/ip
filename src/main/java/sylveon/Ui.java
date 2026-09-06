@@ -53,6 +53,24 @@ public class Ui {
         System.out.println(LINE);
     }
 
+    /** Displays sorted tasks and the sort criterion. */
+    public void showSorted(String sortType, ArrayList<Task> tasks) {
+        System.out.println(LINE);
+        String order = sortType.equals("todo") || sortType.equals("all")
+                ? "alphabetically" : "by date (earliest first)";
+        String subject = sortType.equals("all") ? "tasks" : sortType + "s";
+        System.out.println("Sorted " + subject + " " + order + ":");
+
+        if (tasks.isEmpty()) {
+            System.out.println("There are no matching tasks.");
+        } else {
+            for (int i = 0; i < tasks.size(); i++) {
+                System.out.println("   " + (i + 1) + "." + tasks.get(i));
+            }
+        }
+        System.out.println(LINE);
+    }
+
     /** Displays a confirmation that a task was marked as done. */
     public void showMarked(Task task) {
         System.out.println(LINE
