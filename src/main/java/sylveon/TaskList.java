@@ -21,7 +21,9 @@ public class TaskList {
     public Task delete(int index) { return tasks.remove(index); }
 
     /** Returns the number of tasks. */
-    public int size() { return tasks.size(); }
+    public int size() {
+        return tasks.size();
+    }
 
     /**
      * Returns all tasks whose descriptions contain the specified keyword.
@@ -42,8 +44,16 @@ public class TaskList {
     }
 
     /** Returns whether there are no tasks. */
-    public boolean isEmpty() { return tasks.isEmpty(); }
+    public boolean isEmpty() {
+        return tasks.isEmpty();
+    }
 
-    /** Returns the tasks for display and storage operations. */
-    public ArrayList<Task> getTasks() { return tasks; }
+    /**
+     * Returns the tasks for display and storage operations.
+     *
+     * @return the task collection
+     */
+    public ArrayList<Task> getTasks() {
+        return tasks;
+    }
 }

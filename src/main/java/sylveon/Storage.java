@@ -6,9 +6,17 @@ import java.nio.file.Path;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /** Handles saving and loading tasks from a file. */
 public class Storage {
+    private static final String TODO_CODE = "T";
+    private static final String DEADLINE_CODE = "D";
+    private static final String EVENT_CODE = "E";
+    private static final String DONE_CODE = "1";
+    private static final String NOT_DONE_CODE = "0";
+    private static final String STORAGE_SEPARATOR = " | ";
+
     private final Path filePath;
 
     /** Creates a storage object for the specified file. */
@@ -25,17 +33,17 @@ public class Storage {
             String line;
 
             if (task instanceof Todo) {
-                line = "T | " + (task.isDone() ? "1" : "0")
-                        + " | " + task.getDescription();
+                line = TODO_CODE + STORAGE_SEPARATOR + (task.isDone() ? DONE_CODE : NOT_DONE_CODE)
+                        + STORAGE_SEPARATOR + task.getDescription();
             } else if (task instanceof Deadline deadline) {
-                line = "D | " + (task.isDone() ? "1" : "0")
-                        + " | " + task.getDescription()
-                        + " | " + deadline.getBy();
+                line = DEADLINE_CODE + STORAGE_SEPARATOR + (task.isDone() ? DONE_CODE : NOT_DONE_CODE)
+                        + STORAGE_SEPARATOR + task.getDescription()
+                        + STORAGE_SEPARATOR + deadline.getBy();
             } else if (task instanceof Event event) {
-                line = "E | " + (task.isDone() ? "1" : "0")
-                        + " | " + task.getDescription()
-                        + " | " + event.getFrom()
-                        + " | " + event.getTo();
+                line = EVENT_CODE + STORAGE_SEPARATOR + (task.isDone() ? DONE_CODE : NOT_DONE_CODE)
+                        + STORAGE_SEPARATOR + task.getDescription()
+                        + STORAGE_SEPARATOR + event.getFrom()
+                        + STORAGE_SEPARATOR + event.getTo();
             } else {
                 continue;
             }
@@ -63,21 +71,25 @@ public class Storage {
             List<String> lines = Files.readAllLines(filePath);
 
             for (String line : lines) {
-                String[] parts = line.split(" \\| ");
+                String[] fields = line.split(Pattern.quote(STORAGE_SEPARATOR));
 
                 Task task;
 
-                if (parts[0].equals("T")) {
-                    task = new Todo(parts[2]);
-                } else if (parts[0].equals("D")) {
-                    task = new Deadline(parts[2], LocalDate.parse(parts[3]));
-                } else if (parts[0].equals("E")) {
-                    task = new Event(parts[2], parts[3], parts[4]);
+                String taskType = fields[0];
+                String completionStatus = fields[1];
+                String description = fields[2];
+
+                if (taskType.equals(TODO_CODE)) {
+                    task = new Todo(description);
+                } else if (taskType.equals(DEADLINE_CODE)) {
+                    task = new Deadline(description, LocalDate.parse(fields[3]));
+                } else if (taskType.equals(EVENT_CODE)) {
+                    task = new Event(description, fields[3], fields[4]);
                 } else {
                     continue;
                 }
 
-                if (parts[1].equals("1")) {
+                if (completionStatus.equals(DONE_CODE)) {
                     task.markAsDone();
                 }
 
