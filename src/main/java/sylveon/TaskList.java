@@ -1,7 +1,6 @@
 package sylveon;
 
 import java.util.ArrayList;
-import java.util.stream.Collectors;
 
 /** Manages the collection of tasks in sylveon.Sylveon. */
 public class TaskList {
@@ -31,9 +30,15 @@ public class TaskList {
      * @return tasks whose descriptions contain the keyword
      */
     public ArrayList<Task> find(String keyword) {
-        return tasks.stream()
-                .filter(task -> task.getDescription().contains(keyword))
-                .collect(Collectors.toCollection(ArrayList::new));
+        ArrayList<Task> matchingTasks = new ArrayList<>();
+
+        for (Task task : tasks) {
+            if (task.getDescription().contains(keyword)) {
+                matchingTasks.add(task);
+            }
+        }
+
+        return matchingTasks;
     }
 
     /** Returns whether there are no tasks. */

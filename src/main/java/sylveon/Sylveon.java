@@ -64,6 +64,7 @@ public class Sylveon {
     private String changeTaskStatus(String command, String arguments) throws SylveonException {
         int taskNumber = parseTaskNumber(arguments, command, tasks.size());
         Task task = tasks.get(taskNumber - 1);
+        assert task != null : "A valid task number must return a task";
         if (command.equals("mark")) {
             task.markAsDone();
             storage.save(tasks.getTasks());
@@ -77,6 +78,7 @@ public class Sylveon {
     private String deleteTask(String arguments) throws SylveonException {
         int taskNumber = parseTaskNumber(arguments, "delete", tasks.size());
         Task deletedTask = tasks.delete(taskNumber - 1);
+        assert deletedTask != null : "Deleting a valid task must return a task";
         storage.save(tasks.getTasks());
         return "Sure! I've removed this task:\n" + deletedTask
                 + "\nNow you have " + tasks.size() + " tasks left!";
@@ -102,6 +104,7 @@ public class Sylveon {
             throw new SylveonException("Error! Remember to add a description :)");
         }
         tasks.add(task);
+        assert tasks.get(tasks.size() - 1) == task : "Added task must be stored at the end of the list";
         storage.save(tasks.getTasks());
         return "Added: " + input;
     }
