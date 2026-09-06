@@ -84,7 +84,7 @@ public class Storage {
                 } else if (taskType.equals(DEADLINE_CODE)) {
                     task = new Deadline(description, LocalDate.parse(fields[3]));
                 } else if (taskType.equals(EVENT_CODE)) {
-                    task = new Event(description, fields[3], fields[4]);
+                    task = new Event(description, LocalDate.parse(fields[3]), LocalDate.parse(fields[4]));
                 } else {
                     continue;
                 }
