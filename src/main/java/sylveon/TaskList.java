@@ -8,27 +8,17 @@ public class TaskList {
 
     /** Creates a task list containing the supplied tasks. */
     public TaskList(ArrayList<Task> tasks) {
-        assert tasks != null : "Task list must not be null";
         this.tasks = tasks;
     }
 
     /** Adds a task to the list. */
-    public void add(Task task) {
-        assert task != null : "Cannot add a null task";
-        tasks.add(task);
-    }
+    public void add(Task task) { tasks.add(task); }
 
     /** Returns the task at the given zero-based index. */
-    public Task get(int index) {
-        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
-        return tasks.get(index);
-    }
+    public Task get(int index) { return tasks.get(index); }
 
     /** Removes and returns the task at the given zero-based index. */
-    public Task delete(int index) {
-        assert index >= 0 && index < tasks.size() : "Task index must be within the list";
-        return tasks.remove(index);
-    }
+    public Task delete(int index) { return tasks.remove(index); }
 
     /** Returns the number of tasks. */
     public int size() {
@@ -45,7 +35,6 @@ public class TaskList {
         ArrayList<Task> matchingTasks = new ArrayList<>();
 
         for (Task task : tasks) {
-            assert task != null : "Task list must not contain null tasks";
             if (task.getDescription().contains(keyword)) {
                 matchingTasks.add(task);
             }
