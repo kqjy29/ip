@@ -71,29 +71,42 @@ public class Storage {
             List<String> lines = Files.readAllLines(filePath);
 
             for (String line : lines) {
-                String[] fields = line.split(Pattern.quote(STORAGE_SEPARATOR));
+                try {
+                    String[] fields = line.split(Pattern.quote(STORAGE_SEPARATOR));
 
-                Task task;
+                    if (fields.length < 3) {
+                        continue;
+                    }
 
-                String taskType = fields[0];
-                String completionStatus = fields[1];
-                String description = fields[2];
+                    Task task;
 
-                if (taskType.equals(TODO_CODE)) {
-                    task = new Todo(description);
-                } else if (taskType.equals(DEADLINE_CODE)) {
-                    task = new Deadline(description, LocalDate.parse(fields[3]));
-                } else if (taskType.equals(EVENT_CODE)) {
-                    task = new Event(description, LocalDate.parse(fields[3]), LocalDate.parse(fields[4]));
-                } else {
-                    continue;
+                    String taskType = fields[0];
+                    String completionStatus = fields[1];
+                    String description = fields[2];
+
+                    if (taskType.equals(TODO_CODE)) {
+                        task = new Todo(description);
+                    } else if (taskType.equals(DEADLINE_CODE) && fields.length >= 4) {
+                        task = new Deadline(description, LocalDate.parse(fields[3]));
+                    } else if (taskType.equals(EVENT_CODE) && fields.length >= 5) {
+                        LocalDate from = LocalDate.parse(fields[3]);
+                        LocalDate to = LocalDate.parse(fields[4]);
+                        if (to.isBefore(from)) {
+                            continue;
+                        }
+                        task = new Event(description, from, to);
+                    } else {
+                        continue;
+                    }
+
+                    if (completionStatus.equals(DONE_CODE)) {
+                        task.markAsDone();
+                    }
+
+                    tasks.add(task);
+                } catch (ArrayIndexOutOfBoundsException | DateTimeParseException e) {
+                    // Ignore malformed entries so one bad line does not prevent loading valid tasks.
                 }
-
-                if (completionStatus.equals(DONE_CODE)) {
-                    task.markAsDone();
-                }
-
-                tasks.add(task);
             }
 
         } catch (IOException e) {
