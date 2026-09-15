@@ -1,6 +1,15 @@
 # Sylveon project template
 
 This is a Java chatbot project named Sylveon. The instructions below explain how to set up and run the chatbot.
+
+## Acknowledgements
+
+This project was developed from the NUS CS2103/IP starter code. The JavaFX
+interface was developed with reference to the
+[SE-EDU JavaFX tutorial](https://se-education.org/guides/tutorials/javaFx.html).
+
+JavaFX and Gradle dependencies are used according to their respective licences
+and documentation.
 ## Setting up in Intellij
 
 Prerequisites: JDK 25, update Intellij to the most recent version.

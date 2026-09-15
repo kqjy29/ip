@@ -23,7 +23,7 @@ public class MainWindow extends AnchorPane {
     public void initialize() {
         scrollPane.vvalueProperty().bind(dialogContainer.heightProperty());
         dialogContainer.getChildren().add(DialogBox.getSylveonDialog(
-                "Hello! I am Sylveon. What can I do for you?", sylveonImage));
+                "Hi! I'm Sylveon 💗 Ready to get your tasks sorted?", sylveonImage));
     }
 
     /**
