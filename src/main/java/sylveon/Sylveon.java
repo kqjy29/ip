@@ -182,7 +182,11 @@ public class Sylveon {
             throw new SylveonException("Error! A deadline needs a description and date :)");
         }
         try {
-            return addTask(new Deadline(description, LocalDate.parse(dateText)), input);
+            LocalDate date = LocalDate.parse(dateText);
+            if (date.isBefore(LocalDate.now())) {
+                throw new SylveonException("Error! A deadline cannot be in the past :)");
+            }
+            return addTask(new Deadline(description, date), input);
         } catch (DateTimeParseException e) {
             throw new SylveonException("Error! Please use the date format yyyy-mm-dd :)");
         }
@@ -206,6 +210,9 @@ public class Sylveon {
             LocalDate to = LocalDate.parse(toText);
             if (to.isBefore(from)) {
                 throw new SylveonException("Oops! An event cannot end before it starts 😅");
+            }
+            if (from.isBefore(LocalDate.now())) {
+                throw new SylveonException("Error! An event cannot start in the past :)");
             }
             return addTask(new Event(description, from, to), input);
         } catch (DateTimeParseException e) {
