@@ -44,14 +44,14 @@ public class SylveonGui extends Application {
         sendButton = new Button("Send");
 
         dialogContainer.getChildren().add(DialogBox.getSylveonDialog(
-                "Hello! I am Sylveon. What can I do for you?", sylveonImage));
+                "Hi! I'm Sylveon 💗 Ready to get your tasks sorted?", sylveonImage));
 
         AnchorPane mainLayout = new AnchorPane();
         mainLayout.getChildren().addAll(scrollPane, userInput, sendButton);
 
         Scene scene = new Scene(mainLayout);
 
-        stage.setTitle("Sylveon");
+        stage.setTitle("Sylveon Task Manager");
         stage.setResizable(false);
         stage.setMinWidth(400.0);
         stage.setMinHeight(600.0);
@@ -95,7 +95,7 @@ public class SylveonGui extends Application {
 
         dialogContainer.getChildren().addAll(
                 DialogBox.getUserDialog(userText, userImage),
-                DialogBox.getSylveonDialog("Sylveon heard: " + userText, sylveonImage));
+                DialogBox.getSylveonDialog("Got it! I'll help you with that task 💗", sylveonImage));
         userInput.clear();
     }
 }

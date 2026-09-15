@@ -64,17 +64,17 @@ public class Sylveon {
         case "event":
             return addEvent(arguments, input);
         case "bye":
-            return "Bye bye :) Hope to see you again soon <3";
+            return "Bye for now! Keep going—you've got this 💪";
         default:
-            throw new SylveonException("Oh no, could you try something else? "
-                    + "I do not recognise this command :(");
+            throw new SylveonException("Oops! I couldn't understand that command 😅 "
+                    + "Try checking the format.");
         }
     }
 
     private String formatTaskList() {
         displayedTasks = new ArrayList<>(tasks.getTasks());
         if (tasks.isEmpty()) {
-            return "Yay! Your task list is empty :)";
+            return "Your task list is clear! Add something when you're ready 😊";
         }
         StringBuilder result = new StringBuilder("Here are your tasks:\n");
         for (int i = 0; i < tasks.size(); i++) {
@@ -90,11 +90,11 @@ public class Sylveon {
         if (command.equals("mark")) {
             task.markAsDone();
             storage.save(tasks.getTasks());
-            return "Great! I've marked this task as done <3\n" + task;
+            return "Great job! You finished a task 🎉\n" + task;
         }
         task.markAsNotDone();
         storage.save(tasks.getTasks());
-        return "Okay! I've marked this task as not done yet :)\n" + task;
+        return "No problem! I've marked this task as not done yet 🙂\n" + task;
     }
 
     private String deleteTask(String arguments) throws SylveonException {
@@ -104,13 +104,13 @@ public class Sylveon {
         displayedTasks.remove(deletedTask);
         assert deletedTask != null : "Deleting a valid task must return a task";
         storage.save(tasks.getTasks());
-        return "Sure! I've removed this task:\n" + deletedTask
+        return "Done! That task has been removed 🗑️:\n" + deletedTask
                 + "\nNow you have " + tasks.size() + " tasks left!";
     }
 
     private String findTasks(String arguments) throws SylveonException {
         if (arguments.isEmpty()) {
-            throw new SylveonException("Error! Please provide a keyword after find.");
+            throw new SylveonException("Oops! Please provide a keyword after find 😅");
         }
         ArrayList<Task> matchingTasks = tasks.find(arguments);
         if (matchingTasks.isEmpty()) {
@@ -131,7 +131,7 @@ public class Sylveon {
         displayedTasks = new ArrayList<>(tasks.getTasks());
         assert tasks.get(tasks.size() - 1) == task : "Added task must be stored at the end of the list";
         storage.save(tasks.getTasks());
-        return "Added: " + input;
+        return "All set! I added that task to your list ✨\n" + input;
     }
 
     private String sortTasks(String arguments) throws SylveonException {

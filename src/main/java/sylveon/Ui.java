@@ -22,7 +22,7 @@ public class Ui {
     public void showWelcome() {
         System.out.println(LINE);
         System.out.println(BANNER);
-        System.out.println("Hi!! I'm sylveon.Sylveon <3\nWhat can I do for you?\n" + LINE);
+        System.out.println("Hi! I'm Sylveon 💗 Ready to get your tasks sorted?\n" + LINE);
     }
 
     /** Reads a command from the user. */
@@ -34,7 +34,7 @@ public class Ui {
     /** Displays the chatbot goodbye message. */
     public void showBye() {
         System.out.println(LINE
-                + "\nBye bye :) Hope to see you again soon <3\n"
+                + "\nBye for now! Keep going—you've got this 💪\n"
                 + LINE);
     }
 
@@ -43,7 +43,7 @@ public class Ui {
         System.out.println(LINE);
 
         if (tasks.isEmpty()) {
-            System.out.println("Yay! Your task list is empty :)");
+            System.out.println("Your task list is clear! Add something when you're ready 😊");
         } else {
             for (int i = 0; i < tasks.size(); i++) {
                 System.out.println("   " + (i + 1) + "." + tasks.get(i));
@@ -74,7 +74,7 @@ public class Ui {
     /** Displays a confirmation that a task was marked as done. */
     public void showMarked(Task task) {
         System.out.println(LINE
-                + "\n   Great! I've marked this task as done <3\n   "
+                + "\n   Great job! You finished a task 🎉\n   "
                 + task + "\n"
                 + LINE);
     }
@@ -82,7 +82,7 @@ public class Ui {
     /** Displays a confirmation that a task was marked as not done. */
     public void showUnmarked(Task task) {
         System.out.println(LINE
-                + "\n   Okay! I've marked this task as not done yet :)\n   "
+                + "\n   No problem! I've marked this task as not done yet 🙂\n   "
                 + task + "\n"
                 + LINE);
     }
@@ -90,7 +90,7 @@ public class Ui {
     /** Displays a confirmation that a task was deleted. */
     public void showDeleted(Task task, int remainingTasks) {
         System.out.println(LINE
-                + "\n   Sure! I've removed this task:\n     "
+                + "\n   Done! That task has been removed 🗑️:\n     "
                 + task
                 + "\n   Now you have "
                 + remainingTasks

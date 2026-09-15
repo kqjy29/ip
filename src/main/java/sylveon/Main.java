@@ -27,7 +27,7 @@ public class Main extends Application {
         MainWindow controller = loader.getController();
         controller.setSylveon(sylveon);
 
-        stage.setTitle("Sylveon");
+        stage.setTitle("Sylveon Task Manager");
         stage.setMinWidth(417);
         stage.setMinHeight(220);
         stage.setScene(new Scene(mainLayout));
