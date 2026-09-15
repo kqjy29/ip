@@ -31,6 +31,13 @@ public class Ui {
         return scanner.nextLine();
     }
 
+    /** Displays the commands supported by Sylveon. */
+    public void showHelp() {
+        System.out.println(LINE + "\nCommands: todo <description>, deadline <description> /by <yyyy-mm-dd>, "
+                + "event <description> /from <yyyy-mm-dd> /to <yyyy-mm-dd>, list, find <keyword>, "
+                + "mark <number>, unmark <number>, delete <number>, sort, and bye.\n" + LINE);
+    }
+
     /** Displays the chatbot goodbye message. */
     public void showBye() {
         System.out.println(LINE

@@ -46,6 +46,12 @@ public class Sylveon {
         String arguments = parser.getArguments(input);
 
         switch (commandWord) {
+        case "":
+            throw new SylveonException("Please enter a command. Try typing \"list\" or \"help\" 🙂");
+        case "help":
+            return "Commands: todo <description>, deadline <description> /by <yyyy-mm-dd>, "
+                    + "event <description> /from <yyyy-mm-dd> /to <yyyy-mm-dd>, list, find <keyword>, "
+                    + "mark <number>, unmark <number>, delete <number>, sort, and bye.";
         case "list":
             return formatTaskList();
         case "sort":
@@ -198,6 +204,9 @@ public class Sylveon {
         try {
             LocalDate from = LocalDate.parse(fromText);
             LocalDate to = LocalDate.parse(toText);
+            if (to.isBefore(from)) {
+                throw new SylveonException("Oops! An event cannot end before it starts 😅");
+            }
             return addTask(new Event(description, from, to), input);
         } catch (DateTimeParseException e) {
             throw new SylveonException("Error! Event dates must use the format yyyy-mm-dd :)");
@@ -241,8 +250,12 @@ public class Sylveon {
                 break;
             }
             try {
+            if (commandWord.equals("")) {
+                throw new SylveonException("Please enter a command. Try typing \"list\" or \"help\" 🙂");
+            } else if (commandWord.equals("help")) {
+                ui.showHelp();
             // Display the task list.
-            if (commandWord.equals("list")) {
+            } else if (commandWord.equals("list")) {
                 displayedTasks = new ArrayList<>(tasks.getTasks());
                 ui.showList(displayedTasks);
             } else if (commandWord.equals("sort")) {
@@ -351,6 +364,9 @@ public class Sylveon {
                     try {
                         LocalDate from = LocalDate.parse(fromText);
                         LocalDate to = LocalDate.parse(toText);
+                        if (to.isBefore(from)) {
+                            throw new SylveonException("Oops! An event cannot end before it starts 😅");
+                        }
                         tasks.add(new Event(description, from, to));
                         displayedTasks = new ArrayList<>(tasks.getTasks());
                     } catch (DateTimeParseException e) {
@@ -359,8 +375,8 @@ public class Sylveon {
                     storage.save(tasks.getTasks());
                 } else {
                     // Reject unrecognised commands.
-                    throw new SylveonException(
-                            "Oh no, could you try something else? I do not recognise this command :(");
+                    throw new SylveonException("Oops! I couldn't understand that command 😅 "
+                            + "Try checking the format.");
                 }
                 ui.showAdded(command);
             }

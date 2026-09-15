@@ -36,7 +36,7 @@ public class SylveonTest {
 
         String response = sylveon.getResponse("mark 1");
 
-        assertEquals("Great! I've marked this task as done <3\n"
+        assertEquals("Great job! You finished a task 🎉\n"
                 + "[D][X] earlier (by: Sept 10 2026)", response);
     }
 
@@ -47,6 +47,18 @@ public class SylveonTest {
         String response = sylveon.getResponse("event meeting /from tomorrow /to 2026-09-20");
 
         assertEquals("Error! Event dates must use the format yyyy-mm-dd :)", response);
+    }
+
+    @Test
+    public void emptyCommand_returnsHelpfulError() {
+        assertEquals("Please enter a command. Try typing \"list\" or \"help\" 🙂",
+                createSylveon().getResponse("   "));
+    }
+
+    @Test
+    public void eventEndingBeforeStart_returnsHelpfulError() {
+        assertEquals("Oops! An event cannot end before it starts 😅",
+                createSylveon().getResponse("event meeting /from 2026-09-20 /to 2026-09-10"));
     }
 
     private Sylveon createSylveon() {
