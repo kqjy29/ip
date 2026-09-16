@@ -84,7 +84,7 @@ public class Sylveon {
         }
         StringBuilder result = new StringBuilder("Here are your tasks:\n");
         for (int i = 0; i < tasks.size(); i++) {
-            result.append("   ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+            result.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
         return result.toString().trim();
     }
@@ -124,7 +124,7 @@ public class Sylveon {
         }
         StringBuilder result = new StringBuilder("Here are the matching tasks:\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
-            result.append("   ").append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+            result.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
         }
         return result.toString().trim();
     }
@@ -165,7 +165,7 @@ public class Sylveon {
             return result.append("\nThere are no matching tasks.").toString();
         }
         for (int i = 0; i < displayedTasks.size(); i++) {
-            result.append("\n   ").append(i + 1).append(". ").append(displayedTasks.get(i));
+            result.append("\n").append(i + 1).append(". ").append(displayedTasks.get(i));
         }
         return result.toString();
     }
@@ -182,7 +182,11 @@ public class Sylveon {
             throw new SylveonException("Error! A deadline needs a description and date :)");
         }
         try {
-            return addTask(new Deadline(description, LocalDate.parse(dateText)), input);
+            LocalDate date = LocalDate.parse(dateText);
+            if (date.isBefore(LocalDate.now())) {
+                throw new SylveonException("Error! A deadline cannot be in the past :)");
+            }
+            return addTask(new Deadline(description, date), input);
         } catch (DateTimeParseException e) {
             throw new SylveonException("Error! Please use the date format yyyy-mm-dd :)");
         }
@@ -206,6 +210,9 @@ public class Sylveon {
             LocalDate to = LocalDate.parse(toText);
             if (to.isBefore(from)) {
                 throw new SylveonException("Oops! An event cannot end before it starts 😅");
+            }
+            if (from.isBefore(LocalDate.now())) {
+                throw new SylveonException("Error! An event cannot start in the past :)");
             }
             return addTask(new Event(description, from, to), input);
         } catch (DateTimeParseException e) {
@@ -234,157 +241,20 @@ public class Sylveon {
     public static void main(String[] args) {
         Ui ui = new Ui();
         ui.showWelcome();
+        runCommandLoop(ui, new Sylveon());
+        ui.showBye();
+    }
 
-        Storage storage = new Storage("data/sylveon.txt");
-        TaskList tasks = new TaskList(storage.load());
-        ArrayList<Task> displayedTasks = new ArrayList<>(tasks.getTasks());
-
-        // Process commands until the user exits.
+    /** Processes console commands until the user enters the exit command. */
+    private static void runCommandLoop(Ui ui, Sylveon sylveon) {
+        Parser parser = new Parser();
         while (true) {
             String command = ui.readCommand();
-            Parser parser = new Parser();
             String commandWord = parser.getCommandWord(command);
-            String arguments = parser.getArguments(command);
-            // Exit the application.
             if (commandWord.equals("bye")) {
                 break;
             }
-            try {
-            if (commandWord.equals("")) {
-                throw new SylveonException("Please enter a command. Try typing \"list\" or \"help\" 🙂");
-            } else if (commandWord.equals("help")) {
-                ui.showHelp();
-            // Display the task list.
-            } else if (commandWord.equals("list")) {
-                displayedTasks = new ArrayList<>(tasks.getTasks());
-                ui.showList(displayedTasks);
-            } else if (commandWord.equals("sort")) {
-                if (arguments.isEmpty()) {
-                    displayedTasks = tasks.sortAlphabetically();
-                    storage.save(tasks.getTasks());
-                    ui.showSorted("all", displayedTasks);
-                } else if (arguments.contains(" ")) {
-                    throw new SylveonException("Error! Sort commands accept exactly one task type.");
-                } else if (!arguments.equals("deadline") && !arguments.equals("event")
-                        && !arguments.equals("todo")) {
-                    throw new SylveonException("Error! Invalid sort type. Use deadline, event, or todo.");
-                } else {
-                    displayedTasks = tasks.sortByType(arguments);
-                    storage.save(tasks.getTasks());
-                    ui.showSorted(arguments, displayedTasks);
-                }
-            } else if (commandWord.equals("mark")) {
-                int taskNumber = parseTaskNumber(arguments, "mark", displayedTasks.size());
-                Task task = displayedTasks.get(taskNumber - 1);
-                task.markAsDone();
-                storage.save(tasks.getTasks());
-                ui.showMarked(task);
-            } else if (commandWord.equals("unmark")) {
-                int taskNumber = parseTaskNumber(arguments, "unmark", displayedTasks.size());
-                Task task = displayedTasks.get(taskNumber - 1);
-                task.markAsNotDone();
-                storage.save(tasks.getTasks());
-                ui.showUnmarked(task);
-            } else if (commandWord.equals("delete")) {
-                int taskNumber = parseTaskNumber(arguments, "delete", displayedTasks.size());
-                Task deletedTask = displayedTasks.get(taskNumber - 1);
-                tasks.delete(deletedTask);
-                displayedTasks.remove(deletedTask);
-                storage.save(tasks.getTasks());
-                ui.showDeleted(deletedTask, tasks.size());
-            } else if (commandWord.equals("find")) {
-                if (arguments.isEmpty()) {
-                    throw new SylveonException(
-                            "Error! Please provide a keyword after find."
-                    );
-                }
-
-                ArrayList<Task> matchingTasks = tasks.find(arguments);
-                ui.showMatchingTasks(matchingTasks);
-
-            } else {
-                // Create and add a new task.
-                if (commandWord.equals("todo")) {
-                    String description = arguments;
-                    if (description.isEmpty()) {
-                        throw new SylveonException("Error! Remember to add a description :)");
-                    }
-                    tasks.add(new Todo(description));
-                    displayedTasks = new ArrayList<>(tasks.getTasks());
-                    storage.save(tasks.getTasks());
-                } else if (commandWord.equals("deadline")) {
-                    int idx = arguments.indexOf(" /by ");
-                    if (idx == -1) {
-                        throw new SylveonException(
-                                "Error! A deadline has to be written like this: deadline <description> /by <date>"
-                        );
-                    }
-                    String description = arguments.substring(0, idx).trim();
-                    String by = arguments.substring(idx + 5).trim();
-                    if (description.isEmpty()) {
-                        throw new SylveonException("Error! Remember to add a description :)");
-                    }
-                    if (by.isEmpty()) {
-                        throw new SylveonException("Error! Please provide a date after /by :)");
-                    }
-                    try {
-                        LocalDate date = LocalDate.parse(by);
-                        tasks.add(new Deadline(description, date));
-                        displayedTasks = new ArrayList<>(tasks.getTasks());
-                        storage.save(tasks.getTasks());
-                    } catch (DateTimeParseException e) {
-                        throw new SylveonException(
-                                "Error! Please use the date format yyyy-mm-dd :)"
-                        );
-                    }
-
-                } else if (commandWord.equals("event")) {
-                    int fromIndex = arguments.indexOf(" /from ");
-                    int toIndex = arguments.indexOf(" /to ");
-                    if (fromIndex == -1 || toIndex == -1 || toIndex < fromIndex) {
-                        throw new SylveonException(
-                                "Error! An event must be written like this: event <description> "
-                                        + "/from <yyyy-mm-dd> /to <yyyy-mm-dd>"
-                        );
-                    }
-                    String description = arguments.substring(0, fromIndex).trim();
-                    String fromText = arguments.substring(fromIndex + 7, toIndex).trim();
-                    String toText = arguments.substring(toIndex + 5).trim();
-                    if (description.isEmpty()) {
-                        throw new SylveonException("Error! Remember to add a description :)");
-                    }
-                    if (fromText.isEmpty()) {
-                        throw new SylveonException(
-                                "Error! Please add a starting date in yyyy-mm-dd format after /from :)");
-                    }
-                    if (toText.isEmpty()) {
-                        throw new SylveonException(
-                                "Error! Please add an ending date in yyyy-mm-dd format after /to :)");
-                    }
-                    try {
-                        LocalDate from = LocalDate.parse(fromText);
-                        LocalDate to = LocalDate.parse(toText);
-                        if (to.isBefore(from)) {
-                            throw new SylveonException("Oops! An event cannot end before it starts 😅");
-                        }
-                        tasks.add(new Event(description, from, to));
-                        displayedTasks = new ArrayList<>(tasks.getTasks());
-                    } catch (DateTimeParseException e) {
-                        throw new SylveonException("Error! Event dates must use the format yyyy-mm-dd :)");
-                    }
-                    storage.save(tasks.getTasks());
-                } else {
-                    // Reject unrecognised commands.
-                    throw new SylveonException("Oops! I couldn't understand that command 😅 "
-                            + "Try checking the format.");
-                }
-                ui.showAdded(command);
-            }
-            } catch (SylveonException e) {
-                ui.showError(e.getMessage());
-            }
+            System.out.println(sylveon.getResponse(command));
         }
-        ui.showBye();
-
     }
 }

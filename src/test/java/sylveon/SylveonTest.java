@@ -16,28 +16,28 @@ public class SylveonTest {
     public void sortDeadline_mixedTasks_displaysOnlyDeadlinesInDateOrder() {
         Sylveon sylveon = createSylveon();
         sylveon.getResponse("todo unrelated task");
-        sylveon.getResponse("deadline later /by 2026-09-20");
-        sylveon.getResponse("deadline earlier /by 2026-09-10");
+        sylveon.getResponse("deadline later /by 2099-09-20");
+        sylveon.getResponse("deadline earlier /by 2099-09-10");
 
         String response = sylveon.getResponse("sort deadline");
 
         assertEquals("Sorted deadlines by date (earliest first):\n"
-                + "   1. [D][ ] earlier (by: Sept 10 2026)\n"
-                + "   2. [D][ ] later (by: Sept 20 2026)", response);
+                + "1. [D][ ] earlier (by: Sept 10 2099)\n"
+                + "2. [D][ ] later (by: Sept 20 2099)", response);
     }
 
     @Test
     public void markAfterSortDeadline_marksTheDisplayedDeadline() {
         Sylveon sylveon = createSylveon();
         sylveon.getResponse("todo unrelated task");
-        sylveon.getResponse("deadline later /by 2026-09-20");
-        sylveon.getResponse("deadline earlier /by 2026-09-10");
+        sylveon.getResponse("deadline later /by 2099-09-20");
+        sylveon.getResponse("deadline earlier /by 2099-09-10");
         sylveon.getResponse("sort deadline");
 
         String response = sylveon.getResponse("mark 1");
 
         assertEquals("Great job! You finished a task 🎉\n"
-                + "[D][X] earlier (by: Sept 10 2026)", response);
+                + "[D][X] earlier (by: Sept 10 2099)", response);
     }
 
     @Test
@@ -58,7 +58,19 @@ public class SylveonTest {
     @Test
     public void eventEndingBeforeStart_returnsHelpfulError() {
         assertEquals("Oops! An event cannot end before it starts 😅",
-                createSylveon().getResponse("event meeting /from 2026-09-20 /to 2026-09-10"));
+                createSylveon().getResponse("event meeting /from 2099-09-20 /to 2099-09-10"));
+    }
+
+    @Test
+    public void deadlineInPast_returnsHelpfulError() {
+        assertEquals("Error! A deadline cannot be in the past :)",
+                createSylveon().getResponse("deadline overdue /by 2000-01-01"));
+    }
+
+    @Test
+    public void eventStartingInPast_returnsHelpfulError() {
+        assertEquals("Error! An event cannot start in the past :)",
+                createSylveon().getResponse("event meeting /from 2000-01-01 /to 2000-01-02"));
     }
 
     private Sylveon createSylveon() {
