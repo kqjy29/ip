@@ -22,8 +22,8 @@ public class SylveonTest {
         String response = sylveon.getResponse("sort deadline");
 
         assertEquals("Sorted deadlines by date (earliest first):\n"
-                + "   1. [D][ ] earlier (by: Sept 10 2099)\n"
-                + "   2. [D][ ] later (by: Sept 20 2099)", response);
+                + "1. [D][ ] earlier (by: Sept 10 2099)\n"
+                + "2. [D][ ] later (by: Sept 20 2099)", response);
     }
 
     @Test

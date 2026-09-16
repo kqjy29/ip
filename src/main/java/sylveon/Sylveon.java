@@ -84,7 +84,7 @@ public class Sylveon {
         }
         StringBuilder result = new StringBuilder("Here are your tasks:\n");
         for (int i = 0; i < tasks.size(); i++) {
-            result.append("   ").append(i + 1).append(". ").append(tasks.get(i)).append("\n");
+            result.append(i + 1).append(". ").append(tasks.get(i)).append("\n");
         }
         return result.toString().trim();
     }
@@ -124,7 +124,7 @@ public class Sylveon {
         }
         StringBuilder result = new StringBuilder("Here are the matching tasks:\n");
         for (int i = 0; i < matchingTasks.size(); i++) {
-            result.append("   ").append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
+            result.append(i + 1).append(". ").append(matchingTasks.get(i)).append("\n");
         }
         return result.toString().trim();
     }
@@ -165,7 +165,7 @@ public class Sylveon {
             return result.append("\nThere are no matching tasks.").toString();
         }
         for (int i = 0; i < displayedTasks.size(); i++) {
-            result.append("\n   ").append(i + 1).append(". ").append(displayedTasks.get(i));
+            result.append("\n").append(i + 1).append(". ").append(displayedTasks.get(i));
         }
         return result.toString();
     }

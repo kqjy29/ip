@@ -1,5 +1,6 @@
 package sylveon;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -47,5 +48,9 @@ public class MainWindow extends AnchorPane {
                 DialogBox.getUserDialog(userText, userImage),
                 DialogBox.getSylveonDialog(response, sylveonImage));
         userInput.clear();
+
+        if (new Parser().getCommandWord(userText).equals("bye")) {
+            Platform.exit();
+        }
     }
 }
